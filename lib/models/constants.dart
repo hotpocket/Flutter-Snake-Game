@@ -1,0 +1,3 @@
+const BOARD_WIDTH = 400.0;
+const BOARD_HEIGHT = 600.0;
+const SNAKEPIECE_SIZE = 20.0;
