@@ -21,15 +21,15 @@ class BoardState extends State<Board> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[800],
-      width: BOARD_WIDTH,
-      height: BOARD_HEIGHT,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          _changeDirection(details);
-        },
+    return GestureDetector(
+      onPanUpdate: (details) {
+        _changeDirection(details);
+      },
+      child: Container(
         child: _getGameState(),
+        color: Colors.grey[800],
+        width: BOARD_WIDTH,
+        height: BOARD_HEIGHT,
       ),
     );
   }
@@ -78,11 +78,11 @@ class BoardState extends State<Board> {
 
   void _changeDirection(details) {
     setState(() {
-      var _swipe = details.direction;
+      var _swipe = details.delta.direction;
       if (-pi/4 < _swipe && _swipe < pi/4) {
         _direction = DIRECTION.RIGHT;
       }
-      else if (3*pi/4 < _swipe && _swipe < -3*pi/4) {
+      else if (-3*pi/4 < _swipe && _swipe > 3*pi/4) {
         _direction = DIRECTION.LEFT;
       }
       else if (-3*pi/4 < _swipe && _swipe < -pi/4) {
@@ -104,6 +104,16 @@ class BoardState extends State<Board> {
   Point _newHeadPosition() {
     var newHead;
     var currentHeadPos = _snakePosition.first;
+    if (currentHeadPos.x * SNAKEPIECE_SIZE < 0) {
+      currentHeadPos.x = BOARD_WIDTH / SNAKEPIECE_SIZE;
+    } else if (currentHeadPos.x * SNAKEPIECE_SIZE > BOARD_WIDTH) {
+      currentHeadPos.x = currentHeadPos.x % BOARD_WIDTH / SNAKEPIECE_SIZE;
+    } else if (currentHeadPos.y * SNAKEPIECE_SIZE > BOARD_HEIGHT) {
+      currentHeadPos.y = currentHeadPos.y % BOARD_HEIGHT / SNAKEPIECE_SIZE;
+    } else if (currentHeadPos.y * SNAKEPIECE_SIZE < 0) {
+      currentHeadPos.y = BOARD_HEIGHT / SNAKEPIECE_SIZE;
+    }
+
     switch (_direction) {
       case (DIRECTION.RIGHT):
         newHead = Point(currentHeadPos.x + 1, currentHeadPos.y);
