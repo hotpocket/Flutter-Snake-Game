@@ -1,8 +1,9 @@
-import 'package:snake/models/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:snake/models/snakepiece.dart';
-import 'dart:async';
+import 'package:snake/models/constants.dart';
 import 'package:snake/models/point.dart';
+import 'package:snake/models/snake.dart';
+import 'package:snake/models/apple.dart';
+import 'dart:async';
 import 'dart:math';
 
 enum DIRECTION { LEFT, UP, RIGHT, DOWN }
@@ -17,7 +18,9 @@ class BoardState extends State<Board> {
   var _gameState = GAMESTATE.INIT;
   var _snakePosition = List();
   var _direction;
+  Point _applePosition;
   Timer _timer;
+  Random randomGenerator = Random();
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +29,10 @@ class BoardState extends State<Board> {
         _changeDirection(details);
       },
       child: Container(
-        child: _getGameState(),
         color: Colors.grey[800],
         width: BOARD_WIDTH,
         height: BOARD_HEIGHT,
+        child: _getGameState(),
       ),
     );
   }
@@ -38,60 +41,78 @@ class BoardState extends State<Board> {
     var child;
     switch (_gameState) {
       case GAMESTATE.INIT:
-        _gameInit();
-        break;
+        {
+          _gameInit();
+          break;
+        }
       case GAMESTATE.RUNNING:
-        List<Positioned> snakePieces = List();
-        _snakePosition.forEach((i) {
-          snakePieces.insert(
-            0,
-            Positioned(
-              child: SnakePiece(),
-              left: i.x * SNAKEPIECE_SIZE,
-              top: i.y * SNAKEPIECE_SIZE,
-            ),
-          );
-        });
-        child = Stack(children: snakePieces);
-        break;
+        {
+          List<Positioned> snakeAndApple = List();
+          _snakePosition.forEach((i) {
+            snakeAndApple.insert(
+              0,
+              Positioned(
+                child: Snake(),
+                left: i.x * SNAKE_SIZE,
+                top: i.y * SNAKE_SIZE,
+              ),
+            );
+          });
+          snakeAndApple.add(_getAppleWidget());
+          child = Stack(children: snakeAndApple);
+          break;
+        }
       case GAMESTATE.VICTORY:
-        break;
+        {
+          break;
+        }
       case GAMESTATE.DIED:
-        break;
+        {
+          break;
+        }
     }
     return child;
   }
 
   void _gameInit() {
-    _snakePosition.insert(
-        0,
-        Point((BOARD_WIDTH / SNAKEPIECE_SIZE) / 2,
-            (BOARD_HEIGHT / SNAKEPIECE_SIZE) / 2));
+    _generateApple();
+    _snakePosInit();
     _direction = DIRECTION.UP;
     _gameState = GAMESTATE.RUNNING;
-    _timer = new Timer.periodic(Duration(milliseconds: 500), _timerTick);
+    _timer = new Timer.periodic(Duration(milliseconds: 200), _timerTick);
+  }
+
+  void _snakePosInit() {
+    var x = randomGenerator.nextInt(BOARD_WIDTH ~/ SNAKE_SIZE - 1).toDouble();
+    var y = randomGenerator.nextInt(BOARD_HEIGHT ~/ SNAKE_SIZE - 1).toDouble();
+    _snakePosition.insert(0, Point(x, y));
+  }
+
+  void _generateApple() {
+    var x = randomGenerator.nextInt(BOARD_WIDTH ~/ SNAKE_SIZE - 1).toDouble();
+    var y = randomGenerator.nextInt(BOARD_HEIGHT ~/ SNAKE_SIZE - 1).toDouble();
+    if (_snakePosition.contains(Point(x,y))) {
+      _generateApple();
+    } else {
+    _applePosition = Point(x, y);
+    }
+  }
+
+  Widget _getAppleWidget() {
+    var appleWidget = Positioned(
+      child: Apple(),
+      left: _applePosition.x * APPLE_SIZE,
+      top: _applePosition.y * APPLE_SIZE,
+    );
+    return appleWidget;
   }
 
   void _timerTick(Timer timer) {
     _move();
-  }
-
-  void _changeDirection(details) {
-    setState(() {
-      var _swipe = details.delta.direction;
-      if (-pi/4 < _swipe && _swipe < pi/4) {
-        _direction = DIRECTION.RIGHT;
-      }
-      else if (-3*pi/4 < _swipe && _swipe > 3*pi/4) {
-        _direction = DIRECTION.LEFT;
-      }
-      else if (-3*pi/4 < _swipe && _swipe < -pi/4) {
-        _direction = DIRECTION.UP;
-      }
-      else if (pi/4 < _swipe && _swipe < 3*pi/4) {
-        _direction = DIRECTION.DOWN;
-      }
-    });
+    if (_appleIsEaten()) {
+      _grow();
+      _generateApple();
+    }
   }
 
   void _move() {
@@ -101,33 +122,82 @@ class BoardState extends State<Board> {
     });
   }
 
-  Point _newHeadPosition() {
-    var newHead;
-    var currentHeadPos = _snakePosition.first;
-    if (currentHeadPos.x * SNAKEPIECE_SIZE < 0) {
-      currentHeadPos.x = BOARD_WIDTH / SNAKEPIECE_SIZE;
-    } else if (currentHeadPos.x * SNAKEPIECE_SIZE > BOARD_WIDTH) {
-      currentHeadPos.x = currentHeadPos.x % BOARD_WIDTH / SNAKEPIECE_SIZE;
-    } else if (currentHeadPos.y * SNAKEPIECE_SIZE > BOARD_HEIGHT) {
-      currentHeadPos.y = currentHeadPos.y % BOARD_HEIGHT / SNAKEPIECE_SIZE;
-    } else if (currentHeadPos.y * SNAKEPIECE_SIZE < 0) {
-      currentHeadPos.y = BOARD_HEIGHT / SNAKEPIECE_SIZE;
-    }
+  void _grow() {
+    setState(() {
+      _snakePosition.insert(0, _newHeadPosition());
+    });
+  }
 
+  Point _newHeadPosition() {
+    var currentHeadPos = _snakePosition.first;
+    var x = currentHeadPos.x;
+    var y = currentHeadPos.y;
+    Point newHead = Point(x,y);
     switch (_direction) {
       case (DIRECTION.RIGHT):
-        newHead = Point(currentHeadPos.x + 1, currentHeadPos.y);
-        break;
+        {
+          if (currentHeadPos.x >= GRID_X - 1) {
+            newHead.x = 0.0;
+          } else {
+            newHead.x = currentHeadPos.x + 1;
+          }
+          break;
+        }
       case (DIRECTION.DOWN):
-        newHead = Point(currentHeadPos.x, currentHeadPos.y + 1);
-        break;
+        {
+          if (currentHeadPos.y >= GRID_Y - 1) {
+            newHead.y = 0.0;
+          } else {
+            newHead.y = currentHeadPos.y + 1;
+          }
+          break;
+        }
       case (DIRECTION.LEFT):
-        newHead = Point(currentHeadPos.x - 1, currentHeadPos.y);
-        break;
+        {
+          if (currentHeadPos.x * SNAKE_SIZE <= 0) {
+            newHead.x = BOARD_WIDTH / SNAKE_SIZE - 1;
+          } else {
+            newHead.x = currentHeadPos.x - 1;
+          }
+          break;
+        }
       case (DIRECTION.UP):
-        newHead = Point(currentHeadPos.x, currentHeadPos.y - 1);
-        break;
+        {
+          if (currentHeadPos.y * SNAKE_SIZE <= 0) {
+            newHead.y = BOARD_HEIGHT / SNAKE_SIZE - 1;
+          } else {
+            newHead.y = currentHeadPos.y - 1;
+          }
+          break;
+        }
     }
     return newHead;
+  }
+
+  bool _appleIsEaten() {
+    var head = _newHeadPosition();
+    if (_applePosition == null) {
+      // apple init
+      return true;
+    } else if (head.x == _applePosition.x && head.y == _applePosition.y) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void _changeDirection(details) {
+    setState(() {
+      var _swipe = details.delta.direction;
+      if (-pi / 4 < _swipe && _swipe < pi / 4) {
+        _direction = DIRECTION.RIGHT;
+      } else if (-3 * pi / 4 < _swipe && _swipe > 3 * pi / 4) {
+        _direction = DIRECTION.LEFT;
+      } else if (-3 * pi / 4 < _swipe && _swipe < -pi / 4) {
+        _direction = DIRECTION.UP;
+      } else if (pi / 4 < _swipe && _swipe < 3 * pi / 4) {
+        _direction = DIRECTION.DOWN;
+      }
+    });
   }
 }
