@@ -19,7 +19,7 @@ class BoardState extends State<Board> {
   var _gameState = GAMESTATE.HOMEPAGE;
   var _snakePosition = List();
   var _direction;
-  var _score = 0;
+  var _score = 1;
   var _highScore = 0;
   var _tick = 500;
   Point _applePosition;
@@ -55,16 +55,17 @@ class BoardState extends State<Board> {
 
   Widget _getGameState() {
     var child;
-    _getHighScore();
     switch (_gameState) {
       case GAMESTATE.HOMEPAGE:
         {
+          _getHighScore();
           child = HomePage(_highScore);
           print(_gameState);
           break;
         }
       case GAMESTATE.INIT:
         {
+          _getHighScore();
           _gameInit();
           print(_gameState);
           break;
@@ -75,11 +76,7 @@ class BoardState extends State<Board> {
           _snakePosition.forEach((i) {
             snakeAndApple.insert(
               0,
-              Positioned(
-                child: Snake(),
-                left: i.x * SNAKE_SIZE,
-                top: i.y * SNAKE_SIZE,
-              ),
+              _getSnakeWidget(i),
             );
           });
           snakeAndApple.add(_getAppleWidget());
@@ -106,9 +103,8 @@ class BoardState extends State<Board> {
         }
       case GAMESTATE.DIED:
         {
-          // _timer.cancel();
-          if (_highScore < _score) {
-            _highScore = _score;
+          if (_score > _highScore) {
+            _setHighScore(_score);
           }
 
           child = EndGame(_gameState, _score, _highScore);
@@ -123,16 +119,20 @@ class BoardState extends State<Board> {
   _getHighScore() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int savedHighscore = prefs.getInt('highscore') ?? 0;
-    if (savedHighscore < _highScore) {
-      await prefs.setInt('highscore', _highScore);
-    } else {
+    if (savedHighscore > _highScore) {
       setState(() {
         _highScore = savedHighscore;
       });
     }
   }
 
+  _setHighScore(score) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('highscore', score);
+  }
+
   void _gameInit() {
+    _getHighScore();
     _changeGameState(GAMESTATE.RUNNING);
     _generateApple();
     _snakePosInit();
@@ -168,6 +168,14 @@ class BoardState extends State<Board> {
     }
   }
 
+  Widget _getSnakeWidget(i) {
+    return Positioned(
+      child: Snake(),
+      left: i.x * SNAKE_SIZE,
+      top: i.y * SNAKE_SIZE,
+    );
+  }
+
   Widget _getAppleWidget() {
     var appleWidget = Positioned(
       child: Apple(),
@@ -194,23 +202,26 @@ class BoardState extends State<Board> {
       if (_isSelfCollision()) {
         _changeGameState(GAMESTATE.DIED);
         return;
-      } 
+      }
       if (_appleIsEaten(newHead)) {
         _generateApple();
         _score++;
         _tick -= 10;
-        _tick <= 10 ? _tick = 10 : _tick=_tick;
+        _tick <= 10 ? _tick = 10 : _tick = _tick;
         _snakePosition.insert(0, newHead);
       } else {
         _snakePosition.insert(0, newHead);
         _snakePosition.removeLast();
       }
     });
-    Timer(Duration(milliseconds: _tick),(){_move();});
+    Timer(Duration(milliseconds: _tick), () {
+      _move();
+    });
   }
 
   bool _appleIsEaten(newHead) {
-    if ((newHead.x == _applePosition.x && newHead.y == _applePosition.y) || _applePosition == null) {
+    if ((newHead.x == _applePosition.x && newHead.y == _applePosition.y) ||
+        _applePosition == null) {
       return true;
     }
     return false;

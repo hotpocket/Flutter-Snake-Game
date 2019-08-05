@@ -11,10 +11,20 @@ class EndGame extends StatelessWidget {
     var text;
     if (_score > _highscore) {
       _brokeHighscore = true;
-      text = 'Congratulations! You broke your own highscore!';
+      text = 'Congratulations!';
     } else {
       text = 'Try harder noob';
-    };
+    }
+    return text;
+  }
+
+  String _showScoreOrBrokeHighScore() {
+    var text;
+    if (_brokeHighscore) {
+      text = 'You broke your own highscore!';
+    } else {
+      text = 'Your score: $_score';
+    }
     return text;
   }
 
@@ -45,6 +55,7 @@ class EndGame extends StatelessWidget {
           ),
           Text(
             _highscoreBroken(),
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.red[300],
               fontWeight: FontWeight.bold,
@@ -54,7 +65,8 @@ class EndGame extends StatelessWidget {
             ),
           ),
           Text(
-            _brokeHighscore ? '' : 'Your score: $_score',
+            _showScoreOrBrokeHighScore(),
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.red[300],
               fontWeight: FontWeight.bold,
@@ -64,7 +76,9 @@ class EndGame extends StatelessWidget {
             ),
           ),
           Text(
-            _brokeHighscore ? 'New Highscore: $_score' : 'Highscore: $_highscore',
+            _brokeHighscore
+                ? 'New Highscore: $_score'
+                : 'Highscore: $_highscore',
             style: TextStyle(
               color: Colors.red[300],
               fontWeight: FontWeight.bold,
