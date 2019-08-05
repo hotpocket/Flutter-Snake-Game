@@ -5,12 +5,11 @@ class EndGame extends StatelessWidget {
   final GAMESTATE _state;
   final int _highscore;
   final int _score;
-  bool _brokeHighscore = false;
+  
   EndGame(this._state, this._score, this._highscore);
   String _highscoreBroken() {
     var text;
     if (_score > _highscore) {
-      _brokeHighscore = true;
       text = 'Congratulations!';
     } else {
       text = 'Try harder noob';
@@ -20,7 +19,7 @@ class EndGame extends StatelessWidget {
 
   String _showScoreOrBrokeHighScore() {
     var text;
-    if (_brokeHighscore) {
+    if (_score > _highscore) {
       text = 'You broke your own highscore!';
     } else {
       text = 'Your score: $_score';
@@ -76,7 +75,7 @@ class EndGame extends StatelessWidget {
             ),
           ),
           Text(
-            _brokeHighscore
+            _score > _highscore
                 ? 'New Highscore: $_score'
                 : 'Highscore: $_highscore',
             style: TextStyle(

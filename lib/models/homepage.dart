@@ -45,10 +45,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
-  Widget _highScoreWidget () {
-    if (_highscore==0) {
-      
-    }
-  }
 }
