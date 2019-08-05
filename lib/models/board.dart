@@ -21,14 +21,21 @@ class BoardState extends State<Board> {
   var _direction;
   var _score = 0;
   var _highScore = 0;
+  var _tick = 500;
   Point _applePosition;
-  Timer _timer;
   Random randomGenerator = Random();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onPanUpdate: (details) {
-        _changeDirection(details);
+      onVerticalDragUpdate: (details) {
+        if (_direction == DIRECTION.RIGHT || _direction == DIRECTION.LEFT) {
+          _changeDirection(details);
+        }
+      },
+      onHorizontalDragUpdate: (details) {
+        if (_direction == DIRECTION.UP || _direction == DIRECTION.DOWN) {
+          _changeDirection(details);
+        }
       },
       onTap: () {
         if (_gameState == GAMESTATE.HOMEPAGE) {
@@ -99,7 +106,7 @@ class BoardState extends State<Board> {
         }
       case GAMESTATE.DIED:
         {
-          _timer.cancel();
+          // _timer.cancel();
           if (_highScore < _score) {
             _highScore = _score;
           }
@@ -131,7 +138,7 @@ class BoardState extends State<Board> {
     _snakePosInit();
     var _allDirection = DIRECTION.values;
     _direction = _allDirection[randomGenerator.nextInt(_allDirection.length)];
-    _timer = new Timer.periodic(Duration(milliseconds: 200), _timerTick);
+    _move();
   }
 
   void _snakePosInit() {
@@ -170,28 +177,43 @@ class BoardState extends State<Board> {
     return appleWidget;
   }
 
-  void _timerTick(Timer timer) {
-    if (_appleIsEaten()) {
-      _grow();
-      _generateApple();
-    } else if (_isSelfCollision() || _isWallCollision()) {
-      _changeGameState(GAMESTATE.DIED);
-    } else {
-      _move();
-    }
-  }
+  // _timerTick(framerate) {
+  //   if (_isSelfCollision()) {
+  //     _changeGameState(GAMESTATE.DIED);
+  //   } else {
+  //     _move();
+  //   }
+  //   // await Future.delayed(Duration(milliseconds: framerate),_timerTick(framerate));
+  //   Timer(Duration(milliseconds: framerate),(){_timerTick(framerate);});
+  // }
 
   void _move() {
+    print(_tick);
+    var newHead = _newHeadPosition();
     setState(() {
-      _snakePosition.insert(0, _newHeadPosition());
-      _snakePosition.removeLast();
+      if (_isSelfCollision()) {
+        _changeGameState(GAMESTATE.DIED);
+        return;
+      } 
+      if (_appleIsEaten(newHead)) {
+        _generateApple();
+        _score++;
+        _tick -= 10;
+        _tick <= 10 ? _tick = 10 : _tick=_tick;
+        _snakePosition.insert(0, newHead);
+      } else {
+        _snakePosition.insert(0, newHead);
+        _snakePosition.removeLast();
+      }
     });
+    Timer(Duration(milliseconds: _tick),(){_move();});
   }
 
-  void _grow() {
-    setState(() {
-      _snakePosition.insert(0, _newHeadPosition());
-    });
+  bool _appleIsEaten(newHead) {
+    if ((newHead.x == _applePosition.x && newHead.y == _applePosition.y) || _applePosition == null) {
+      return true;
+    }
+    return false;
   }
 
   Point _newHeadPosition() {
@@ -221,24 +243,20 @@ class BoardState extends State<Board> {
           break;
         }
     }
+    if (newHead.x >= GRID_X) {
+      newHead.x = newHead.x % GRID_X;
+    } else if (newHead.x < 0) {
+      newHead.x = GRID_X - 1;
+    }
+    if (newHead.y >= GRID_Y) {
+      newHead.y = newHead.y % GRID_Y;
+    } else if (newHead.y < 0) {
+      newHead.y = GRID_Y - 1;
+    }
     return newHead;
   }
 
-  bool _appleIsEaten() {
-    var head = _snakePosition.first;
-    if (_applePosition == null) {
-      // apple init
-      return true;
-    } else if (head.x == _applePosition.x && head.y == _applePosition.y) {
-      setState(() {
-        _score++;
-      });
-      return true;
-    } else {
-      return false;
-    }
-  }
-
+  // control
   void _changeDirection(details) {
     var _swipe = details.delta.direction;
     if (-pi / 4 < _swipe && _swipe < pi / 4) {
@@ -291,13 +309,13 @@ class BoardState extends State<Board> {
     return false;
   }
 
-  bool _isWallCollision() {
-    var head = _snakePosition.first;
-    if (head.x < 0 || head.x >= GRID_X || head.y < 0 || head.y >= GRID_Y) {
-      return true;
-    }
-    return false;
-  }
+  // bool _isWallCollision() {
+  //   var head = _snakePosition.first;
+  //   if (head.x < 0 || head.x >= GRID_X || head.y < 0 || head.y >= GRID_Y) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   void _changeGameState(gamestate) {
     setState(() {
@@ -312,6 +330,7 @@ class BoardState extends State<Board> {
       _applePosition = null;
       _score = 0;
       _direction = null;
+      _tick = 500;
     });
   }
 }

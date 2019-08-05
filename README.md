@@ -1,6 +1,11 @@
-# snake
+# snake version 1.1
 
-A new Flutter project.
+- Implemented increasing framerate with increasing scores.
+- Fixed swipe-control bugs.
+- Fixed apple-still-exists-after-being-eaten-by-snake bug.
+- Added launcher icon.
+
+TODO: implement a server that could record global users highscore
 
 ## Getting Started
 
