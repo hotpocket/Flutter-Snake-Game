@@ -7,11 +7,12 @@ Transform score(_score) {
     child: Container(
       padding: EdgeInsets.fromLTRB(0,10,GRID_X,0),
       child: Text(
-        '$_score',
+        _score< 10 ? '0'+'$_score': '$_score',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 25,
-          color: Colors.amberAccent,
+          color: Colors.white,
+          fontFamily: 'Impact',
         ),
       ),
     ),

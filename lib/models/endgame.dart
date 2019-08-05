@@ -5,14 +5,14 @@ class EndGame extends StatelessWidget {
   final GAMESTATE _state;
   final int _highscore;
   final int _score;
-  
+
   EndGame(this._state, this._score, this._highscore);
   String _highscoreBroken() {
     var text;
     if (_score > _highscore) {
-      text = 'Congratulations!';
+      text = 'G O O D  J O B';
     } else {
-      text = 'Try harder noob';
+      text = 'N O O B  S H I T';
     }
     return text;
   }
@@ -32,68 +32,115 @@ class EndGame extends StatelessWidget {
     if (_state == GAMESTATE.VICTORY) {
       _status = 'Congratulations! You are the best!';
     } else if (_state == GAMESTATE.DIED) {
-      _status = 'Game Over';
+      _status = 'G A M E  O V E R';
     }
     return _status;
   }
 
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue[100],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: EdgeInsets.only(top: 20),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            _gameStatus(),
-            style: TextStyle(
-              color: Colors.red[200],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 40,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _gameStatus(), //GAME OVER
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 45,
+                    fontFamily: 'Impact',
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            _highscoreBroken(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red[300],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 30,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.all(5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _highscoreBroken(), // NOOB SHIT
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 45,
+                    fontFamily: 'Impact',
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            _showScoreOrBrokeHighScore(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red[300],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 30,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.only(top: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _showScoreOrBrokeHighScore(), // Your Score
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    fontFamily: 'Impact',
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            _score > _highscore
-                ? 'New Highscore: $_score'
-                : 'Highscore: $_highscore',
-            style: TextStyle(
-              color: Colors.red[300],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 30,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.only(top:5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  _score > _highscore
+                      ? 'New Highscore: $_score'
+                      : 'Highscore: $_highscore', //Highscore
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    fontFamily: 'Impact',
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            'Please Tap To Restart',
-            style: TextStyle(
-              color: Colors.red[200],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 30,
-              fontFamily: 'Comic Sans',
+          Container(
+            child: Image.asset(
+              'assets/sprite/gameover.png',
+              fit: BoxFit.contain,
+            ),
+            height: 250,
+            width: 250,
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Tap To Restart',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40,
+                    fontFamily: 'Impact',
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -6,41 +6,54 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Snake Game',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red[400],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 40,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.only(top: 100),
+            child: Text(
+              'S I L L Y S N A K E',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 45,
+                fontFamily: 'Impact',
+              ),
             ),
           ),
-          Text(
-            'Highscore: $_highscore',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red[300],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 40,
-              fontFamily: 'Comic Sans',
+          Container(
+            padding: EdgeInsets.all(30),
+            child: Text(
+              'High score: $_highscore',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+                fontFamily: 'Impact',
+              ),
             ),
           ),
-          Text(
-            'Please Click to Continue',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red[400],
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              fontSize: 30,
-              fontFamily: 'Comic Sans',
+          Container(
+            child: Image.asset(
+              'assets/sprite/homepage.png',
+              fit: BoxFit.contain,
             ),
-          )
+            height: 250,
+            width: 250,
+          ),
+          Container(
+            child: Text(
+              'Tap to start',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+                fontFamily: 'Impact',
+              ),
+            ),
+          ),
         ],
       ),
     );
