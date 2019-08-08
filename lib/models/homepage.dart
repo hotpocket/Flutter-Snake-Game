@@ -9,7 +9,8 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.only(top: 100),
+            padding: EdgeInsets.only(top: 80
+            ),
             child: Text(
               'S I L L Y S N A K E',
               textAlign: TextAlign.center,

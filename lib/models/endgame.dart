@@ -27,6 +27,28 @@ class EndGame extends StatelessWidget {
     return _status;
   }
 
+  Widget getHighscoreChild() {
+    if (_score > _highscore) {
+      return Container(
+        child: Image.asset(
+          'assets/sprite/brokehighscore.png',
+          fit: BoxFit.contain,
+        ),
+        height: 250,
+        width: 250,
+      );
+    } else {
+      return Container(
+        child: Image.asset(
+          'assets/sprite/gameover.png',
+          fit: BoxFit.contain,
+        ),
+        height: 250,
+        width: 250,
+      );
+    }
+  }
+
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -91,7 +113,7 @@ class EndGame extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top:5),
+            padding: EdgeInsets.only(top: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -109,14 +131,7 @@ class EndGame extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            child: Image.asset(
-              'assets/sprite/gameover.png',
-              fit: BoxFit.contain,
-            ),
-            height: 250,
-            width: 250,
-          ),
+          getHighscoreChild(),
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

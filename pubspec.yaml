@@ -55,6 +55,7 @@ flutter:
    - assets/sprite/apple.png
    - assets/sprite/gameover.png
    - assets/sprite/homepage.png
+   - assets/sprite/brokehighscore.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

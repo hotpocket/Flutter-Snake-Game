@@ -19,7 +19,7 @@ class BoardState extends State<Board> {
   var _gameState = GAMESTATE.HOMEPAGE;
   var _snakePosition = List();
   var _direction;
-  var _score = 1;
+  var _score = 0;
   var _highScore = 0;
   var _tick = 300;
   Timer _timer;
