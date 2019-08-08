@@ -17,16 +17,6 @@ class EndGame extends StatelessWidget {
     return text;
   }
 
-  String _showScoreOrBrokeHighScore() {
-    var text;
-    if (_score > _highscore) {
-      text = 'You broke your own highscore!';
-    } else {
-      text = 'Your score: $_score';
-    }
-    return text;
-  }
-
   String _gameStatus() {
     var _status;
     if (_state == GAMESTATE.VICTORY) {
@@ -88,7 +78,7 @@ class EndGame extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _showScoreOrBrokeHighScore(), // Your Score
+                  'Your score: $_score', // Your Score
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

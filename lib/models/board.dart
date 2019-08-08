@@ -21,7 +21,7 @@ class BoardState extends State<Board> {
   var _direction;
   var _score = 1;
   var _highScore = 0;
-  var _tick = 350;
+  var _tick = 300;
   Timer _timer;
   Point _applePosition;
   Random randomGenerator = Random();
@@ -246,7 +246,7 @@ class BoardState extends State<Board> {
         if (_appleIsEaten(newHead)) {
           _generateApple();
           _score++;
-          _tick <= 10 ? _tick = 10 : _tick -= 1;
+          _tick <= 50 ? _tick = 50 : _tick -= 5;
           _snakePosition.insert(0, newHead);
         } else {
           _snakePosition.insert(0, newHead);
@@ -386,7 +386,7 @@ class BoardState extends State<Board> {
       _score = 0;
       _direction = DIRECTION
           .values[randomGenerator.nextInt(DIRECTION.values.length - 1)];
-      _tick = 500;
+      _tick = 300;
     });
   }
 }
