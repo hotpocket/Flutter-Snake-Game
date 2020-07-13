@@ -10,9 +10,9 @@ class EndGame extends StatelessWidget {
   String _highscoreBroken() {
     var text;
     if (_score > _highscore) {
-      text = 'G O O D  J O B';
+      text = 'H I G H S C O R E';
     } else {
-      text = 'N O O B  S H I T';
+      text = 'T R Y  A G A I N';
     }
     return text;
   }
@@ -22,7 +22,11 @@ class EndGame extends StatelessWidget {
     if (_state == GAMESTATE.VICTORY) {
       _status = 'Congratulations! You are the best!';
     } else if (_state == GAMESTATE.DIED) {
-      _status = 'G A M E  O V E R';
+      if (_score > _highscore) {
+        _status = 'N E W';
+      } else {
+        _status = 'G A M E  O V E R';
+      }
     }
     return _status;
   }
